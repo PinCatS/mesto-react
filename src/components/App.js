@@ -1,35 +1,14 @@
-import './App.css';
+import '../index.css';
+import Header from './Header';
+import Main from './Main';
+import Footer from './Footer';
 
 function App() {
   return (
-    <div className="App">
-        <header className="header page__header">
-          <img src="<%=require('./images/logo.svg')%>" alt="Лого Mesto" className="header__logo" />
-        </header>
-
-        <main className="content page__content">
-          <section className="profile">
-            <div className="profile__info">
-              <div className="profile__avatar-button">
-                <img className="profile__avatar" src="<%=require('./images/avatar.jpg')%>" alt="Аватар профиля" />
-              </div>
-              <div className="profile__info-text">
-                <h1 className="profile__name">Имя профиля</h1>
-                <p className="profile__activity"></p>
-                <button type="button" aria-label="Редактировать профиль" name="profile-edit-button" className="button profile__edit-button"></button>
-              </div>
-            </div>
-            <button type="button" aria-label="Добавить карточку" name="profile-add-button" className="button profile__add-button"></button>
-          </section>
-
-          <section className="places page__places" aria-label="Карточки мест">
-            <ul className="cards"></ul>
-          </section>
-        </main>
-
-        <footer className="footer page__footer">
-          <p className="footer__copyright">&copy;2020 Mesto Russia</p>
-        </footer>
+    <div className="App page">
+        <Header></Header>
+        <Main></Main>
+        <Footer></Footer>
 
 
         <div className="popup popup_name_edit-profile">
