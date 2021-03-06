@@ -28,28 +28,17 @@ function App() {
     setSelectedCard(card);
   }
 
-  const closeAllPopups = (popupName) => {
-    switch (popupName) {
-      case 'edit-profile':
-          setIsEditProfilePopupOpen(false);
-          break;
-      case 'add-card':
-          setIsAddPlacePopupOpen(false);
-          break;
-      case 'update-avatar':
-          setIsEditAvatarPopupOpen(false);
-          break;
-      case 'image-popup':
-          setSelectedCard(null);
-          break;
-      default:
-          console.error('closeAllPopups: Unexpected popup name. Check the logic.');
-    }
+  const closeAllPopups = () => {
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIsEditAvatarPopupOpen(false);
+    setSelectedCard(null);
   }
 
 
   return (
     <div className="App page">
+        {console.log('rendering')}
         <Header />
         <Main
             onEditProfile={onEditProfile}
