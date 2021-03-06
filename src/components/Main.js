@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import '../index.css';
 import Card from './Card';
-import api from './utils/api';
-import { onRequestError } from './utils/utils';
+import api from '../utils/api';
+import { onRequestError } from '../utils/utils';
 
 function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     const [userName, setUserName] = useState('Имя пользователя');
