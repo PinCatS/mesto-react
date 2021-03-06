@@ -7,6 +7,7 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
     const [userName, setUserName] = useState('Имя пользователя');
     const [userDescription, setUserDescription] = useState('Описание деятельности');
     const [userAvatar, setUserAvatar] = useState(null);
+    const [cards, setCards] = useState([]);
 
     useEffect(() => {
         api
@@ -17,6 +18,11 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
                 setUserAvatar(avatar);
           })
           .catch(err => onRequestError(err, 'Failed to get user info.'));
+
+        api
+          .getCards()
+          .then(cards => setCards(cards))
+          .catch(err => onRequestError(err, 'Failed to get cards.'));
     }, []);
 
     return (
@@ -46,7 +52,24 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
             </section>
 
             <section className="places page__places" aria-label="Карточки мест">
-                <ul className="cards"></ul>
+                <ul className="cards">
+                  {
+                    cards.map(card => {
+                      return (
+                        <li key={card._id} className="card">
+                          <button type="button" aria-label="Удалить карточку" className="button card__remove-button card__remove-button_visible"></button>
+                          <img className="card__image" src={card.link} alt="Камчатка" />
+                          <div className="card__info">
+                            <h2 className="card__title">{card.name}</h2>
+                            <div className="card__like">
+                              <button type="button" aria-label="Нравится" className="button card__like-button"></button>
+                              <p className="card__like-counter">{card?.likes.length}</p>
+                            </div>
+                          </div>
+                        </li>
+                    )})
+                  }
+                </ul>
             </section>
         </main>
     )
