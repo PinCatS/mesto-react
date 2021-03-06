@@ -35,7 +35,6 @@ function App() {
     setSelectedCard(null);
   }
 
-
   return (
     <div className="App page">
         <Header />
