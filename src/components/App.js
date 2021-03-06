@@ -10,6 +10,7 @@ function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   const onEditProfile = () => {
     setIsEditProfilePopupOpen(true);
@@ -23,6 +24,10 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   }
 
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+  }
+
   const closeAllPopups = (popupName) => {
     switch (popupName) {
       case 'edit-profile':
@@ -34,6 +39,9 @@ function App() {
       case 'update-avatar':
           setIsEditAvatarPopupOpen(false);
           break;
+      case 'image-popup':
+          setSelectedCard(null);
+          break;
       default:
           console.error('closeAllPopups: Unexpected popup name. Check the logic.');
     }
@@ -43,7 +51,11 @@ function App() {
   return (
     <div className="App page">
         <Header />
-        <Main onEditProfile={onEditProfile} onAddPlace={onAddPlace} onEditAvatar={onEditAvatar} />
+        <Main
+            onEditProfile={onEditProfile}
+            onAddPlace={onAddPlace}
+            onEditAvatar={onEditAvatar}
+            onCardClick={handleCardClick} />
         <Footer />
 
         <PopupWithForm
@@ -112,22 +124,7 @@ function App() {
           <button type="submit" className="button popup__save-button">Да</button>
         </PopupWithForm>
 
-        <ImagePopup />
-
-
-        <template id="card">
-          <li className="card">
-            <button type="button" aria-label="Удалить карточку" className="button card__remove-button card__remove-button_visible"></button>
-            <img className="card__image" src="https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg" alt="Камчатка" />
-            <div className="card__info">
-              <h2 className="card__title">Наименование карточки</h2>
-              <div className="card__like">
-                <button type="button" aria-label="Нравится" className="button card__like-button"></button>
-                <p className="card__like-counter">0</p>
-              </div>
-            </div>
-          </li>
-        </template>
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
     </div>
   );
 }

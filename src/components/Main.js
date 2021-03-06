@@ -4,7 +4,7 @@ import Card from './Card';
 import api from './utils/api';
 import { onRequestError } from './utils/utils';
 
-function Main({onEditProfile, onAddPlace, onEditAvatar}) {
+function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     const [userName, setUserName] = useState('Имя пользователя');
     const [userDescription, setUserDescription] = useState('Описание деятельности');
     const [userAvatar, setUserAvatar] = useState(null);
@@ -54,7 +54,7 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
 
             <section className="places page__places" aria-label="Карточки мест">
                 <ul className="cards">
-                  { cards.map(card => (<Card key={card._id} card={card}/>)) }
+                  { cards.map(card => (<Card key={card._id} card={card} onCardClick={onCardClick} />)) }
                 </ul>
             </section>
         </main>
