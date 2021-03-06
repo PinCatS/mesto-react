@@ -1,16 +1,34 @@
+import { useState, useEffect } from 'react';
 import '../index.css';
+import api from './utils/api';
+import { onRequestError } from './utils/utils';
 
 function Main({onEditProfile, onAddPlace, onEditAvatar}) {
+    const [userName, setUserName] = useState('Имя пользователя');
+    const [userDescription, setUserDescription] = useState('Описание деятельности');
+    const [userAvatar, setUserAvatar] = useState(null);
+
+    useEffect(() => {
+        api
+          .getUserInfo()
+          .then(({name, about, avatar}) => {
+                setUserName(name);
+                setUserDescription(about);
+                setUserAvatar(avatar);
+          })
+          .catch(err => onRequestError(err, 'Failed to get user info.'));
+    }, []);
+
     return (
         <main className="content page__content">
             <section className="profile">
                 <div className="profile__info">
-                    <div className="profile__avatar-div" onClick={onEditAvatar}>
-                        <img className="profile__avatar" src="" alt="Аватар профиля" />
+                    <div className="profile__avatar-button" onClick={onEditAvatar}>
+                        <img className="profile__avatar" src={userAvatar} alt="Аватар профиля" />
                     </div>
                     <div className="profile__info-text">
-                        <h1 className="profile__name">Имя профиля</h1>
-                        <p className="profile__activity"></p>
+                        <h1 className="profile__name">{userName}</h1>
+                        <p className="profile__activity">{userDescription}</p>
                         <button
                             type="button"
                             aria-label="Редактировать профиль"

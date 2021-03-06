@@ -10,3 +10,10 @@ export const formConfig = {
 export const profileInfoEditButton = document.querySelector('.profile__edit-button');
 export const addCardButton = document.querySelector('.profile__add-button');
 export const updateAvatarButton = document.querySelector('.profile__avatar-button');
+
+export function onRequestError(apiErr, msg) {
+    const apiErrorMsg = apiErr
+            ? `${apiErr.status} ${apiErr.statusText}`
+            : null;
+    console.error(msg, apiErrorMsg);
+}
