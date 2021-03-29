@@ -2,7 +2,7 @@ import '../index.css';
 import {useContext} from 'react';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
 
-function Card({card, onCardClick}) {
+function Card({card, onCardClick, onCardLike}) {
 
     const user = useContext(CurrentUserContext);
     const isOwn = card.owner._id === user._id;
@@ -15,6 +15,7 @@ function Card({card, onCardClick}) {
     );
 
     const handleCardClick = () => onCardClick(card);
+    const handleCardLike = () => onCardLike(card);
 
     return (
         <li className="card">
@@ -27,7 +28,10 @@ function Card({card, onCardClick}) {
             <div className="card__info">
                 <h2 className="card__title">{card.name}</h2>
                 <div className="card__like">
-                    <button type="button" aria-label="Нравится" className={cardLikeButtonClassName}></button>
+                    <button type="button"
+                            aria-label="Нравится"
+                            className={cardLikeButtonClassName}
+                            onClick={handleCardLike}></button>
                     <p className="card__like-counter">{card?.likes.length}</p>
                 </div>
             </div>

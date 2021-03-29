@@ -9,6 +9,14 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     const user = useContext(CurrentUserContext);
     const [cards, setCards] = useState([]);
 
+    function handleCardLike(card) {
+        const isLiked = card.likes.some(like => like._id === user._id);
+        
+        api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        });
+    } 
+
     useEffect(() => {
         api
           .getCards()
@@ -44,7 +52,12 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
 
             <section className="places page__places" aria-label="Карточки мест">
                 <ul className="cards">
-                    { cards.map(card => (<Card key={card._id} card={card} onCardClick={onCardClick} />)) }
+                    { cards.map(card => (
+                        <Card key={card._id}
+                                card={card}
+                                onCardClick={onCardClick}
+                                onCardLike={handleCardLike}/>))
+                    }
                 </ul>
             </section>
         </main>
