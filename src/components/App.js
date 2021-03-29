@@ -1,6 +1,9 @@
 import '../index.css';
 import Header from './Header';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import { onRequestError } from '../utils/utils';
+import api from '../utils/api';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
@@ -11,6 +14,14 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    api
+      .getUserInfo()
+      .then((user) => setCurrentUser(user))
+      .catch(err => onRequestError(err, 'Failed to get user info.'));
+  }, []);
 
   const onEditProfile = () => {
     setIsEditProfilePopupOpen(true);
@@ -37,6 +48,7 @@ function App() {
 
   return (
     <div className="App page">
+      <CurrentUserContext.Provider value={currentUser}>
         <Header />
         <Main
             onEditProfile={onEditProfile}
@@ -51,20 +63,20 @@ function App() {
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}>
             <input
-               type="text"
-               className="form-input popup__input popup__input_name_name"
-               name="profile-name"
-               placeholder="Имя профиля"
-               minLength="2" maxLength="40"
-               required /> 
+              type="text"
+              className="form-input popup__input popup__input_name_name"
+              name="profile-name"
+              placeholder="Имя профиля"
+              minLength="2" maxLength="40"
+              required /> 
             <span className="popup__input-error popup__input-error_name_profile-name"></span>
             <input
-               type="text"
-               className="form-input popup__input popup__input_name_activity"
-               name="profile-activity"
-               placeholder="Деятельность"
-               minLength="2" maxLength="200"
-               required />
+              type="text"
+              className="form-input popup__input popup__input_name_activity"
+              name="profile-activity"
+              placeholder="Деятельность"
+              minLength="2" maxLength="200"
+              required />
             <span className="popup__input-error popup__input-error_name_profile-activity"></span>
             <button type="submit" className="button popup__save-button">Сохранить</button>
         </PopupWithForm>
@@ -83,11 +95,11 @@ function App() {
                 required />
             <span className="popup__input-error popup__input-error_name_place-name"></span>
             <input
-               type="url"
-               className="form-input popup__input popup__input_name_place-image-url"
-               name="place-image-url"
-               placeholder="Ссылка на картинку"
-               required />
+              type="url"
+              className="form-input popup__input popup__input_name_place-image-url"
+              name="place-image-url"
+              placeholder="Ссылка на картинку"
+              required />
             <span className="popup__input-error popup__input-error_name_place-image-url"></span>
             <button type="submit" className="button popup__save-button">Создать</button>
         </PopupWithForm>
@@ -112,6 +124,7 @@ function App() {
         </PopupWithForm>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+      </CurrentUserContext.Provider>
     </div>
   );
 }
