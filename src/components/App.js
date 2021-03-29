@@ -8,6 +8,7 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
+import EditProfilePopup from './EditProfilePopup';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -46,6 +47,14 @@ function App() {
     setSelectedCard(null);
   }
 
+  const handleUpdateUser = ({name, about}) => {
+    api
+      .setProfile(name, about)
+      .then((newUser) => setCurrentUser(newUser))
+      .catch(err => onRequestError(err, 'Failed to edit profile.'))
+      .finally(() => closeAllPopups());
+  }
+
   return (
     <div className="App page">
       <CurrentUserContext.Provider value={currentUser}>
@@ -57,29 +66,7 @@ function App() {
             onCardClick={handleCardClick} />
         <Footer />
 
-        <PopupWithForm
-          name="edit-profile"
-          title="Редактировать профиль"
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}>
-            <input
-              type="text"
-              className="form-input popup__input popup__input_name_name"
-              name="profile-name"
-              placeholder="Имя профиля"
-              minLength="2" maxLength="40"
-              required /> 
-            <span className="popup__input-error popup__input-error_name_profile-name"></span>
-            <input
-              type="text"
-              className="form-input popup__input popup__input_name_activity"
-              name="profile-activity"
-              placeholder="Деятельность"
-              minLength="2" maxLength="200"
-              required />
-            <span className="popup__input-error popup__input-error_name_profile-activity"></span>
-            <button type="submit" className="button popup__save-button">Сохранить</button>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
 
         <PopupWithForm
           name="add-card"
