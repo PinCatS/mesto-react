@@ -12,10 +12,20 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     function handleCardLike(card) {
         const isLiked = card.likes.some(like => like._id === user._id);
         
-        api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
-            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        });
-    } 
+        api.changeLikeCardStatus(card._id, isLiked)
+            .then((newCard) => {
+                setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+            })
+            .catch(err => onRequestError(err, 'Failed to change like status.'));
+    }
+    
+    function handleCardDelete(card) {
+        api.deleteCard(card._id)
+            .then(() => {
+                setCards((state) => state.filter((c) => c._id !== card._id));
+            })
+            .catch(err => onRequestError(err, 'Failed to remove card.'));
+    }
 
     useEffect(() => {
         api
@@ -56,7 +66,8 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
                         <Card key={card._id}
                                 card={card}
                                 onCardClick={onCardClick}
-                                onCardLike={handleCardLike}/>))
+                                onCardLike={handleCardLike}
+                                onCardDelete={handleCardDelete}/>))
                     }
                 </ul>
             </section>

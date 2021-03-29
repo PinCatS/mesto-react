@@ -2,7 +2,7 @@ import '../index.css';
 import {useContext} from 'react';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
 
-function Card({card, onCardClick, onCardLike}) {
+function Card({card, onCardClick, onCardLike, onCardDelete}) {
 
     const user = useContext(CurrentUserContext);
     const isOwn = card.owner._id === user._id;
@@ -16,10 +16,14 @@ function Card({card, onCardClick, onCardLike}) {
 
     const handleCardClick = () => onCardClick(card);
     const handleCardLike = () => onCardLike(card);
+    const handleCardDelete = () => onCardDelete(card);
 
     return (
         <li className="card">
-            <button type="button" aria-label="Удалить карточку" className={cardDeleteButtonClassName}></button>
+            <button type="button"
+                    aria-label="Удалить карточку"
+                    className={cardDeleteButtonClassName}
+                    onClick={handleCardDelete}></button>
             <img
                 className="card__image"
                 src={card.link}
