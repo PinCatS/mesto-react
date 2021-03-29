@@ -9,6 +9,7 @@ import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -55,6 +56,14 @@ function App() {
       .finally(() => closeAllPopups());
   }
 
+  const handleUpdateAvatar= (link) => {
+    api
+      .updateAvatar(link)
+      .then((newUser) => setCurrentUser(newUser))
+      .catch(err => onRequestError(err, 'Failed to update avatar.'))
+      .finally(() => closeAllPopups());
+  }
+
   return (
     <div className="App page">
       <CurrentUserContext.Provider value={currentUser}>
@@ -91,20 +100,7 @@ function App() {
             <button type="submit" className="button popup__save-button">Создать</button>
         </PopupWithForm>
 
-        <PopupWithForm
-          name="update-avatar"
-          title="Обновить аватар"
-          isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}>
-            <input
-                type="url"
-                className="form-input popup__input popup__input_name_avatar-link"
-                name="avatar-link"
-                placeholder="https://somewebsite.com/someimage.jpg"
-                required />
-            <span className="popup__input-error popup__input-error_name_avatar-link"></span>
-            <button type="submit" className="button popup__save-button">Сохранить</button>       
-        </PopupWithForm>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
 
         <PopupWithForm name="remove-card" title="Вы уверены?">
           <button type="submit" className="button popup__save-button">Да</button>
