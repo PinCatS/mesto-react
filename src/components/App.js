@@ -17,6 +17,9 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [cards, setCards] = useState([]);
+  const [isAddingCard, setIsAddingCard] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -74,29 +77,41 @@ function App() {
   }
 
   const handleUpdateUser = ({name, about}) => {
+    setIsSavingProfile(true);
     api
       .setProfile(name, about)
       .then((newUser) => setCurrentUser(newUser))
       .catch(err => onRequestError(err, 'Failed to edit profile.'))
-      .finally(() => closeAllPopups());
+      .finally(() => {
+        setIsSavingProfile(false);
+        closeAllPopups();
+      });
   }
 
   const handleUpdateAvatar = (link) => {
+    setIsSavingAvatar(true);
     api
       .updateAvatar(link)
       .then((newUser) => setCurrentUser(newUser))
       .catch(err => onRequestError(err, 'Failed to update avatar.'))
-      .finally(() => closeAllPopups());
+      .finally(() => {
+        setIsSavingAvatar(false);
+        closeAllPopups();
+      });
   }
 
   const handleCardAdd = ({name, link}) => {
+    setIsAddingCard(true);
     api
       .addCard(name, link)
       .then(newCard => {
         setCards([newCard, ...cards]); 
       })
       .catch(err => onRequestError(err, 'Failed to add new card.'))
-      .finally(() => closeAllPopups());
+      .finally(() => {
+        setIsAddingCard(false);
+        closeAllPopups();
+      });
   }
 
   return (
@@ -113,11 +128,11 @@ function App() {
             onCardDelete={handleCardDelete} />
         <Footer />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isSavingProfile}/>
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onCardAdd={handleCardAdd}></AddPlacePopup>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onCardAdd={handleCardAdd} isLoading={isAddingCard}></AddPlacePopup>
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isLoading={isSavingAvatar}/>
 
         <PopupWithForm name="remove-card" title="Вы уверены?">
           <button type="submit" className="button popup__save-button">Да</button>

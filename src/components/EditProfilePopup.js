@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from 'react';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
 import PopupWithForm from './PopupWithForm';
 
-function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
+function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
   const user = useContext(CurrentUserContext);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -52,7 +52,7 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
           minLength="2" maxLength="200"
           required />
         <span className="popup__input-error popup__input-error_name_profile-activity"></span>
-        <button type="submit" className="button popup__save-button">Сохранить</button>
+        <button type="submit" className="button popup__save-button">{isLoading ? 'Сохранить...' : 'Сохранить'}</button>
     </PopupWithForm>
   );
 }

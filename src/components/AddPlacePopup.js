@@ -2,7 +2,7 @@ import { useState } from 'react';
 import '../index.css';
 import PopupWithForm from './PopupWithForm';
 
-function AddPlacePopup({isOpen, onClose, onCardAdd}) {
+function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
     const [name, setName] = useState('');
     const [link, setLink] = useState('');
 
@@ -45,7 +45,7 @@ function AddPlacePopup({isOpen, onClose, onCardAdd}) {
               placeholder="Ссылка на картинку"
               required />
           <span className="popup__input-error popup__input-error_name_place-image-url"></span>
-          <button type="submit" className="button popup__save-button">Создать</button>
+          <button type="submit" className="button popup__save-button">{isLoading ? 'Создать...' : 'Создать'}</button>
       </PopupWithForm>
     );
 }
