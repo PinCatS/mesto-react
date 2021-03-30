@@ -10,6 +10,7 @@ import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -80,11 +81,21 @@ function App() {
       .finally(() => closeAllPopups());
   }
 
-  const handleUpdateAvatar= (link) => {
+  const handleUpdateAvatar = (link) => {
     api
       .updateAvatar(link)
       .then((newUser) => setCurrentUser(newUser))
       .catch(err => onRequestError(err, 'Failed to update avatar.'))
+      .finally(() => closeAllPopups());
+  }
+
+  const handleCardAdd = ({name, link}) => {
+    api
+      .addCard(name, link)
+      .then(newCard => {
+        setCards([newCard, ...cards]); 
+      })
+      .catch(err => onRequestError(err, 'Failed to add new card.'))
       .finally(() => closeAllPopups());
   }
 
@@ -104,28 +115,7 @@ function App() {
 
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser}/>
 
-        <PopupWithForm
-          name="add-card"
-          title="Новое место"
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}>
-            <input
-                type="text"
-                className="form-input popup__input popup__input_name_place-name"
-                name="place-name"
-                placeholder="Название"
-                minLength="2" maxLength="30"
-                required />
-            <span className="popup__input-error popup__input-error_name_place-name"></span>
-            <input
-              type="url"
-              className="form-input popup__input popup__input_name_place-image-url"
-              name="place-image-url"
-              placeholder="Ссылка на картинку"
-              required />
-            <span className="popup__input-error popup__input-error_name_place-image-url"></span>
-            <button type="submit" className="button popup__save-button">Создать</button>
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onCardAdd={handleCardAdd}></AddPlacePopup>
 
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
 
