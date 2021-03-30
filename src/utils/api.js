@@ -79,6 +79,14 @@ class Api {
       })
       .then(this._onResponse);
     }
+
+    changeLikeCardStatus(cardId, isLiked) {
+      if (isLiked) {
+        return this.removeLike(cardId);
+      } else {
+        return this.setLike(cardId);
+      }
+    }
 }
 
 /* Create and export API */
