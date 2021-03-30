@@ -1,38 +1,16 @@
-import { useState, useEffect, useContext } from 'react';
+import { useContext } from 'react';
 import '../index.css';
 import Card from './Card';
-import api from '../utils/api';
-import { onRequestError } from '../utils/utils';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
+function Main({cards,
+                onEditProfile,
+                onAddPlace,
+                onEditAvatar,
+                onCardClick,
+                onCardLike,
+                onCardDelete}) {
     const user = useContext(CurrentUserContext);
-    const [cards, setCards] = useState([]);
-
-    function handleCardLike(card) {
-        const isLiked = card.likes.some(like => like._id === user._id);
-        
-        api.changeLikeCardStatus(card._id, isLiked)
-            .then((newCard) => {
-                setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-            })
-            .catch(err => onRequestError(err, 'Failed to change like status.'));
-    }
-    
-    function handleCardDelete(card) {
-        api.deleteCard(card._id)
-            .then(() => {
-                setCards((state) => state.filter((c) => c._id !== card._id));
-            })
-            .catch(err => onRequestError(err, 'Failed to remove card.'));
-    }
-
-    useEffect(() => {
-        api
-          .getCards()
-          .then(cards => setCards(cards))
-          .catch(err => onRequestError(err, 'Failed to get cards.'));
-    }, []);
 
     return (
         <main className="content page__content">
@@ -66,8 +44,8 @@ function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
                         <Card key={card._id}
                                 card={card}
                                 onCardClick={onCardClick}
-                                onCardLike={handleCardLike}
-                                onCardDelete={handleCardDelete}/>))
+                                onCardLike={onCardLike}
+                                onCardDelete={onCardDelete}/>))
                     }
                 </ul>
             </section>
