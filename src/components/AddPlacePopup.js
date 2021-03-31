@@ -5,9 +5,14 @@ import PopupWithForm from './PopupWithForm';
 function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
     const [name, setName] = useState('');
     const [link, setLink] = useState('');
+    const [isFormValid, setIsFormValid] = useState(false);
 
     const handleNameChange = (evt) => setName(evt.target.value);
     const handleLinkChange = (evt) => setLink(evt.target.value);
+    const resetInputs = () => {
+      setName('');
+      setLink('');
+    }
 
     const handleSubmit = (evt) => {
       evt.preventDefault();
@@ -15,17 +20,24 @@ function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
         name,
         link
       });
-      setName('');
-      setLink('');
+      resetInputs();
     }
+
+    const handleClose = () => {
+      resetInputs();
+      onClose();
+    }
+
+    const handleFormValidity = (isValid) => setIsFormValid(isValid);
 
     return (
       <PopupWithForm
           name="add-card"
           title="Новое место"
           isOpen={isOpen}
-          onClose={onClose}
-          onSubmit={handleSubmit}>
+          onClose={handleClose}
+          onSubmit={handleSubmit}
+          isFormValid={handleFormValidity}>
           <input
               type="text"
               className="form-input popup__input popup__input_name_place-name"
@@ -45,7 +57,9 @@ function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
               placeholder="Ссылка на картинку"
               required />
           <span className="popup__input-error popup__input-error_name_place-image-url"></span>
-          <button type="submit" className="button popup__save-button">{isLoading ? 'Создать...' : 'Создать'}</button>
+          <button type="submit"
+                  className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
+                  disabled={!isFormValid}>{isLoading ? 'Создать...' : 'Создать'}</button>
       </PopupWithForm>
     );
 }

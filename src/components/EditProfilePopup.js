@@ -7,6 +7,7 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
   const user = useContext(CurrentUserContext);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
     setName(user?.name ?? '');
@@ -15,6 +16,16 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
 
   const handleNameChange = (evt) => setName(evt.target.value);
   const handleDescriptionChange = (evt) => setDescription(evt.target.value);
+
+  const resetInputs = () => {
+    setName('');
+    setDescription('');
+  }
+
+  const handleClose = () => {
+    resetInputs();
+    onClose();
+  }
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -25,13 +36,16 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
     });
   } 
 
+  const handleFormValidity = (isValid) => setIsFormValid(isValid);
+
   return (
     <PopupWithForm
       name="edit-profile"
       title="Редактировать профиль"
       isOpen={isOpen}
-      onClose={onClose}
-      onSubmit={handleSubmit}>
+      onClose={handleClose}
+      onSubmit={handleSubmit}
+      isFormValid={handleFormValidity}>
         <input
           type="text"
           className="form-input popup__input popup__input_name_name"
@@ -52,7 +66,9 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
           minLength="2" maxLength="200"
           required />
         <span className="popup__input-error popup__input-error_name_profile-activity"></span>
-        <button type="submit" className="button popup__save-button">{isLoading ? 'Сохранить...' : 'Сохранить'}</button>
+        <button type="submit"
+                className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
+                disabled={!isFormValid}>{isLoading ? 'Сохранить...' : 'Сохранить'}</button>
     </PopupWithForm>
   );
 }

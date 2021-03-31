@@ -6,21 +6,21 @@ import api from '../utils/api';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Main from './Main';
 import Footer from './Footer';
-import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import DeleteConfirmPopup from './DeleteConfirmPopup';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
   const [cards, setCards] = useState([]);
-  const [isAddingCard, setIsAddingCard] = useState(false);
-  const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+  const [isDoingWork, setIsDoingWork] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [cardToDelete, setCardToDelete] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -61,12 +61,23 @@ function App() {
         .catch(err => onRequestError(err, 'Failed to change like status.'));
   }
 
+  const doCardDelete = () => {
+    setIsDoingWork(true);
+    api.deleteCard(cardToDelete._id)
+        .then(() => {
+            setCards((state) => state.filter((c) => c._id !== cardToDelete._id));
+        })
+        .catch(err => onRequestError(err, 'Failed to remove card.'))
+        .finally(() => {
+          setIsDoingWork(false);
+          setCardToDelete(null);
+          closeAllPopups();
+        });
+  } 
+
   const handleCardDelete = (card) => {
-      api.deleteCard(card._id)
-          .then(() => {
-              setCards((state) => state.filter((c) => c._id !== card._id));
-          })
-          .catch(err => onRequestError(err, 'Failed to remove card.'));
+    setCardToDelete(card);
+    setIsConfirmPopupOpen(true);
   }
 
   const closeAllPopups = () => {
@@ -74,34 +85,36 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setSelectedCard(null);
+    setIsConfirmPopupOpen(false);
+    setCardToDelete(null);
   }
 
   const handleUpdateUser = ({name, about}) => {
-    setIsSavingProfile(true);
+    setIsDoingWork(true);
     api
       .setProfile(name, about)
       .then((newUser) => setCurrentUser(newUser))
       .catch(err => onRequestError(err, 'Failed to edit profile.'))
       .finally(() => {
-        setIsSavingProfile(false);
+        setIsDoingWork(false);
         closeAllPopups();
       });
   }
 
   const handleUpdateAvatar = (link) => {
-    setIsSavingAvatar(true);
+    setIsDoingWork(true);
     api
       .updateAvatar(link)
       .then((newUser) => setCurrentUser(newUser))
       .catch(err => onRequestError(err, 'Failed to update avatar.'))
       .finally(() => {
-        setIsSavingAvatar(false);
+        setIsDoingWork(false);
         closeAllPopups();
       });
   }
 
   const handleCardAdd = ({name, link}) => {
-    setIsAddingCard(true);
+    setIsDoingWork(true);
     api
       .addCard(name, link)
       .then(newCard => {
@@ -109,7 +122,7 @@ function App() {
       })
       .catch(err => onRequestError(err, 'Failed to add new card.'))
       .finally(() => {
-        setIsAddingCard(false);
+        setIsDoingWork(false);
         closeAllPopups();
       });
   }
@@ -128,17 +141,16 @@ function App() {
             onCardDelete={handleCardDelete} />
         <Footer />
 
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isSavingProfile}/>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isLoading={isDoingWork}/>
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onCardAdd={handleCardAdd} isLoading={isAddingCard}></AddPlacePopup>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onCardAdd={handleCardAdd} isLoading={isDoingWork} />
 
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isLoading={isSavingAvatar}/>
-
-        <PopupWithForm name="remove-card" title="Вы уверены?">
-          <button type="submit" className="button popup__save-button">Да</button>
-        </PopupWithForm>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isLoading={isDoingWork}/>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+
+        <DeleteConfirmPopup isOpen={isConfirmPopupOpen} onClose={closeAllPopups} onDeleteConfirm={doCardDelete} isLoading={isDoingWork}/>
+
       </CurrentUserContext.Provider>
     </div>
   );
