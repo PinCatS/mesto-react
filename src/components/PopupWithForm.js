@@ -1,9 +1,17 @@
+import { useEffect, useRef } from 'react';
 import '../index.css';
 
-function PopupWithForm({title, name, isOpen, onClose, onSubmit, children, ...props}) {
+function PopupWithForm({title, name, isOpen, onClose, onSubmit, isFormValid, children, ...props}) {
+  const formRef = useRef();
+
+  useEffect(() => {
+    isFormValid && isFormValid(formRef.current.checkValidity());
+  });
+
   return (
     <div className={`popup popup_name_${name} ${isOpen && 'popup_opened'}`}  >
-      <form className="popup__container popup__form"
+      <form ref={formRef}
+            className="popup__container popup__form"
             name={`${name}-form`}
             onSubmit={onSubmit}
             noValidate>
