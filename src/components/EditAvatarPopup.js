@@ -1,11 +1,9 @@
 import '../index.css';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import PopupWithForm from './PopupWithForm';
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
   const [link, setLink] = useState('');
-  const [isFormValid, setIsFormValid] = useState(false);
-  const refLink = useRef();
   const [linkInputErrMessage, setLinkInputErrMessage] = useState(null);
 
   const resetInputs = () => {
@@ -19,9 +17,13 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
   }
 
   const handleChange = (evt) => {
+    const value = evt.target.value;
     setLink(evt.target.value);
-    if (!refLink.current.validity.valid) {
-      setLinkInputErrMessage(refLink.current.validationMessage);
+
+    if (!value) {
+      setLinkInputErrMessage('Обзазательное поле.');
+    } else if (!/^(https?:\/\/)/.test(value)) {
+      setLinkInputErrMessage('Не верный формат ссылки.');
     } else {
       setLinkInputErrMessage(null);
     }
@@ -32,35 +34,29 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
     onUpdateAvatar(link);
     resetInputs();
   }
-  
-  const handleFormValidity = (isValid) => {
-    setIsFormValid(isValid);
-  };
 
   return (
     <PopupWithForm
       name="update-avatar"
       title="Обновить аватар"
+      buttonText="Сохранить"
       isOpen={isOpen}
+      isLoading={isLoading}
       onClose={handleClose}
-      onSubmit={handleSubmit}
-      isFormValid={handleFormValidity}>
+      onSubmit={handleSubmit}>
         <input
             type="url"
-            ref={refLink}
             className="form-input popup__input popup__input_name_avatar-link"
             name="avatar-link"
             value={link}
             onChange={handleChange}
+            onBlur={handleChange}
             placeholder="https://somewebsite.com/someimage.jpg"
             required />
         <span
             className={`popup__input-error popup__input-error_name_avatar-link ${linkInputErrMessage && 'popup__input-error_active'}`}>
             {linkInputErrMessage}
-        </span>
-        <button type="submit"
-                className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
-                disabled={!isFormValid}>{isLoading ? 'Сохранить...' : 'Сохранить'}</button>       
+        </span>    
     </PopupWithForm>
   );
 }

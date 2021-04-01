@@ -66,12 +66,12 @@ function App() {
     api.deleteCard(cardToDelete._id)
         .then(() => {
             setCards((state) => state.filter((c) => c._id !== cardToDelete._id));
+            closeAllPopups();
         })
         .catch(err => onRequestError(err, 'Failed to remove card.'))
         .finally(() => {
           setIsDoingWork(false);
           setCardToDelete(null);
-          closeAllPopups();
         });
   } 
 
@@ -93,11 +93,13 @@ function App() {
     setIsDoingWork(true);
     api
       .setProfile(name, about)
-      .then((newUser) => setCurrentUser(newUser))
+      .then((newUser) => {
+        setCurrentUser(newUser);
+        closeAllPopups();
+      })
       .catch(err => onRequestError(err, 'Failed to edit profile.'))
       .finally(() => {
         setIsDoingWork(false);
-        closeAllPopups();
       });
   }
 
@@ -105,11 +107,13 @@ function App() {
     setIsDoingWork(true);
     api
       .updateAvatar(link)
-      .then((newUser) => setCurrentUser(newUser))
+      .then((newUser) => {
+        setCurrentUser(newUser);
+        closeAllPopups();
+      })
       .catch(err => onRequestError(err, 'Failed to update avatar.'))
       .finally(() => {
         setIsDoingWork(false);
-        closeAllPopups();
       });
   }
 
@@ -119,11 +123,11 @@ function App() {
       .addCard(name, link)
       .then(newCard => {
         setCards([newCard, ...cards]); 
+        closeAllPopups();
       })
       .catch(err => onRequestError(err, 'Failed to add new card.'))
       .finally(() => {
         setIsDoingWork(false);
-        closeAllPopups();
       });
   }
 
