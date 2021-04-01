@@ -1,5 +1,5 @@
 import '../index.css';
-import {useContext, useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {CurrentUserContext} from '../contexts/CurrentUserContext';
 import PopupWithForm from './PopupWithForm';
 
@@ -7,8 +7,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
   const user = useContext(CurrentUserContext);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const refName = useRef();
-  const refDescription = useRef();
   const [nameInputErrMessage, setNameInputErrMessage] = useState(null);
   const [descriptionInputErrMessage, setDescriptionInputErrMessage] = useState(null);
 
@@ -18,18 +16,26 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
   }, [user]); 
 
   const handleNameChange = (evt) => {
-    setName(evt.target.value);
-    if (!refName.current.validity.valid) {
-      setNameInputErrMessage(refName.current.validationMessage);
+    const value = evt.target.value;
+    setName(value);
+
+    if (!value) {
+      setNameInputErrMessage('Обзазательное поле.');
+    } else if (value.length < 2 || value.length > 40) {
+      setNameInputErrMessage('Поле должно содержать минимум 2 символа и максимум 40.');
     } else {
       setNameInputErrMessage(null);
     }
   };
 
   const handleDescriptionChange = (evt) => {
-    setDescription(evt.target.value);
-    if (!refDescription.current.validity.valid) {
-      setDescriptionInputErrMessage(refDescription.current.validationMessage);
+    const value = evt.target.value;
+    setDescription(value);
+
+    if (!value) {
+      setDescriptionInputErrMessage('Обзазательное поле.');
+    } else if (value.length < 2 || value.length > 200) {
+      setDescriptionInputErrMessage('Поле должно содержать минимум 2 символа и максимум 200.');
     } else {
       setDescriptionInputErrMessage(null);
     }
@@ -67,7 +73,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
       onSubmit={handleSubmit}>
         <input
           type="text"
-          ref={refName}
           className="form-input popup__input popup__input_name_name"
           name="profile-name"
           value={name}
@@ -81,7 +86,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
         </span>
         <input
           type="text"
-          ref={refDescription}
           className="form-input popup__input popup__input_name_activity"
           name="profile-activity"
           value={description}

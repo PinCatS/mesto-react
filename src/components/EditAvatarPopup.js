@@ -1,10 +1,9 @@
 import '../index.css';
-import {useRef, useState} from 'react';
+import {useState} from 'react';
 import PopupWithForm from './PopupWithForm';
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
   const [link, setLink] = useState('');
-  const refLink = useRef();
   const [linkInputErrMessage, setLinkInputErrMessage] = useState(null);
 
   const resetInputs = () => {
@@ -18,9 +17,13 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
   }
 
   const handleChange = (evt) => {
+    const value = evt.target.value;
     setLink(evt.target.value);
-    if (!refLink.current.validity.valid) {
-      setLinkInputErrMessage(refLink.current.validationMessage);
+
+    if (!value) {
+      setLinkInputErrMessage('Обзазательное поле.');
+    } else if (!/^(https?:\/\/)/.test(value)) {
+      setLinkInputErrMessage('Не верный формат ссылки.');
     } else {
       setLinkInputErrMessage(null);
     }
@@ -43,11 +46,11 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
       onSubmit={handleSubmit}>
         <input
             type="url"
-            ref={refLink}
             className="form-input popup__input popup__input_name_avatar-link"
             name="avatar-link"
             value={link}
             onChange={handleChange}
+            onBlur={handleChange}
             placeholder="https://somewebsite.com/someimage.jpg"
             required />
         <span
