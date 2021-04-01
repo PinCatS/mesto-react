@@ -7,7 +7,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
   const user = useContext(CurrentUserContext);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [isFormValid, setIsFormValid] = useState(false);
   const refName = useRef();
   const refDescription = useRef();
   const [nameInputErrMessage, setNameInputErrMessage] = useState(null);
@@ -55,18 +54,17 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
       name,
       about: description,
     });
-  } 
-
-  const handleFormValidity = (isValid) => setIsFormValid(isValid);
+  }
 
   return (
     <PopupWithForm
       name="edit-profile"
       title="Редактировать профиль"
+      buttonText="Сохранить"
       isOpen={isOpen}
+      isLoading={isLoading}
       onClose={handleClose}
-      onSubmit={handleSubmit}
-      isFormValid={handleFormValidity}>
+      onSubmit={handleSubmit}>
         <input
           type="text"
           ref={refName}
@@ -95,9 +93,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser, isLoading}) {
           className={`popup__input-error popup__input-error_name_profile-activity ${descriptionInputErrMessage && 'popup__input-error_active'}`}>
           {descriptionInputErrMessage}
         </span>
-        <button type="submit"
-                className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
-                disabled={!isFormValid}>{isLoading ? 'Сохранить...' : 'Сохранить'}</button>
     </PopupWithForm>
   );
 }

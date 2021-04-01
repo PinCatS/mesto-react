@@ -5,7 +5,6 @@ import PopupWithForm from './PopupWithForm';
 function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
     const [name, setName] = useState('');
     const [link, setLink] = useState('');
-    const [isFormValid, setIsFormValid] = useState(false);
     const [nameInputErrMessage, setNameInputErrMessage] = useState(null);
     const [urlInputErrMessage, setUrlInputErrMessage] = useState(null);
     const refName = useRef();
@@ -49,16 +48,15 @@ function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
       onClose();
     }
 
-    const handleFormValidity = (isValid) => setIsFormValid(isValid);
-
     return (
       <PopupWithForm
           name="add-card"
           title="Новое место"
           isOpen={isOpen}
+          isLoading={isLoading}
+          buttonText="Создать"
           onClose={handleClose}
-          onSubmit={handleSubmit}
-          isFormValid={handleFormValidity}>
+          onSubmit={handleSubmit}>
           <input
               type="text"
               ref={refName}
@@ -86,9 +84,6 @@ function AddPlacePopup({isOpen, onClose, onCardAdd, isLoading}) {
             className={`popup__input-error popup__input-error_name_place-image-url ${urlInputErrMessage && 'popup__input-error_active'}`}>
             {urlInputErrMessage}
           </span>
-          <button type="submit"
-                  className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
-                  disabled={!isFormValid}>{isLoading ? 'Создать...' : 'Создать'}</button>
       </PopupWithForm>
     );
 }

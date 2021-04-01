@@ -4,7 +4,6 @@ import PopupWithForm from './PopupWithForm';
 
 function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
   const [link, setLink] = useState('');
-  const [isFormValid, setIsFormValid] = useState(false);
   const refLink = useRef();
   const [linkInputErrMessage, setLinkInputErrMessage] = useState(null);
 
@@ -32,19 +31,16 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
     onUpdateAvatar(link);
     resetInputs();
   }
-  
-  const handleFormValidity = (isValid) => {
-    setIsFormValid(isValid);
-  };
 
   return (
     <PopupWithForm
       name="update-avatar"
       title="Обновить аватар"
+      buttonText="Сохранить"
       isOpen={isOpen}
+      isLoading={isLoading}
       onClose={handleClose}
-      onSubmit={handleSubmit}
-      isFormValid={handleFormValidity}>
+      onSubmit={handleSubmit}>
         <input
             type="url"
             ref={refLink}
@@ -57,10 +53,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateAvatar, isLoading}) {
         <span
             className={`popup__input-error popup__input-error_name_avatar-link ${linkInputErrMessage && 'popup__input-error_active'}`}>
             {linkInputErrMessage}
-        </span>
-        <button type="submit"
-                className={`button popup__save-button ${!isFormValid && 'popup__save-button_disabled'}`}
-                disabled={!isFormValid}>{isLoading ? 'Сохранить...' : 'Сохранить'}</button>       
+        </span>    
     </PopupWithForm>
   );
 }
